@@ -2,6 +2,10 @@
 
 set -e
 
+CONFFILE="/opt/zabbix/conf/zabbix_agentd.conf"
+CONFFILE_DEST="/opt/zabbix/conf/zabbix_agentd.conf"
+
+
 
 if [ "$1" = "configure" ]; then
     # Does the user 'zabbix' exist?
@@ -13,4 +17,9 @@ if [ "$1" = "configure" ]; then
     chown zabbix:zabbix /opt/zabbix/ -R
 fi
 
+
+
+    # Use ucf to handle the zabbix_agentd.conf configuration file
+    ucf $CONFFILE $CONFFILE_DEST
+    ucfr zabbix-agent $CONFFILE_DEST
 

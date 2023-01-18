@@ -3,7 +3,7 @@
   tasks:
     - name: Copy .deb package to target
       ansible.builtin.copy:
-        src: /root/zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
+        src: ./zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
         dest: /root/
         owner: root
         group: root
