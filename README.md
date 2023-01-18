@@ -19,3 +19,11 @@ apt install ./zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
 ```
 
 Note that .deb package installs everyting to /opt/zabbix/
+
+
+Added Ansible playbook
+
+```
+ansible-playbook /etc/ansible/zabbix-agent.yml -l hostname.com
+```
+
