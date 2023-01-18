@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+
+if [ "$1" = "configure" ]; then
+    # Does the user 'zabbix' exist?
+    if ! getent passwd zabbix > /dev/null 2>&1 ; then
+        # Not yet. Create it.
+        adduser --quiet --system --group --disabled-login --no-create-home --home /nonexistent zabbix
+    fi
+
+    chown zabbix:zabbix /opt/zabbix/ -R
+fi
+
+

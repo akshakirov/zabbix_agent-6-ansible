@@ -1,0 +1,3 @@
+/opt/zabbix/conf/zabbix_agentd.conf
+/opt/zabbix/conf/zabbix_agentd/userparameter_examples.conf
+/opt/zabbix/conf/zabbix_agentd/userparameter_mysql.conf
