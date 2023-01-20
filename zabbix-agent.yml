@@ -1,7 +1,16 @@
 ---
 - hosts: all
   tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+      tags:
+        - always
+      when: ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
+
     - name: Copy .deb package to target
+      tags: 
+        - copy
       ansible.builtin.copy:
         src: ./zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
         dest: /root/
@@ -9,22 +18,34 @@
         group: root
         mode: '0644'
       when: ansible_facts['distribution'] == "Ubuntu"
+
     - name: Install a .deb package
+      tags: 
+        - install
       ansible.builtin.apt:
         deb: /root/zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
       when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Remove .deb file on target
+      tags: 
+        - clean
       ansible.builtin.file:
         path: /root/zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
         state: absent
 
     - name: Enable service zabbix-agent6 and ensure it is not masked
+      tags: 
+        - install
       ansible.builtin.systemd:
         name: zabbix-agent6
         enabled: yes
         masked: no
+      when: ansible_facts['distribution'] == "Ubuntu"
+
     - name: Make sure a service unit is running
+      tags: 
+        - install
       ansible.builtin.systemd:
         state: started
         name: zabbix-agent6
+      when: ansible_facts['distribution'] == "Ubuntu"
