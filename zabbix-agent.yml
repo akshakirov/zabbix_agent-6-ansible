@@ -1,5 +1,11 @@
 ---
-- hosts: all
+- name: Install alternate zabbix agent v6 in separate folder
+  hosts: all
+  become: yes
+
+  vars: 
+    deb_packet_ubuntu: zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
+    deb_packet_tmp_path: /root/
   tasks:
     - name: Update and upgrade apt packages
       apt:
@@ -12,25 +18,26 @@
       tags: 
         - copy
       ansible.builtin.copy:
-        src: ./zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
-        dest: /root/
+        src: ./{{ deb_packet_ubuntu }}
+        dest: "{{ deb_packet_tmp_path }}"
         owner: root
         group: root
         mode: '0644'
       when: ansible_facts['distribution'] == "Ubuntu"
+      ignore_errors: no
 
     - name: Install a .deb package
       tags: 
         - install
       ansible.builtin.apt:
-        deb: /root/zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
+        deb: "{{ deb_packet_tmp_path }}{{ deb_packet_ubuntu }}"
       when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: Remove .deb file on target
       tags: 
         - clean
       ansible.builtin.file:
-        path: /root/zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
+        path: "{{ deb_packet_tmp_path }}{{ deb_packet_ubuntu }}"
         state: absent
 
     - name: Enable service zabbix-agent6 and ensure it is not masked
