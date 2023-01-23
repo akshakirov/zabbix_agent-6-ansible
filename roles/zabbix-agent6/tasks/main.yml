@@ -50,3 +50,44 @@
     name: zabbix-agent6
   when: ansible_facts['distribution'] == "Ubuntu"
 
+# CentOS
+- name: create directory for unarchiving
+  file:
+    path: "{{ zabbix_agent_path }}"
+    state: directory
+  when: ansible_facts['distribution'] == "CentOS"
+- name: Extract bianries to CentOS servers
+  ansible.builtin.unarchive:
+    src: "{{ tar_packet_linux3 }}"
+    dest: "{{ zabbix_agent_path }}"
+  when: ansible_facts['distribution'] == "CentOS"
+- name: Ensure group "zabbix" exists
+  ansible.builtin.group:
+    name: "{{ zabbix_group }}"
+    state: present
+  when: ansible_facts['distribution'] == "CentOS"
+- name: Add "zabbix" user
+  ansible.builtin.user:
+    name: "{{ zabbix_user }}"
+    comment: Zabbix
+    group: "{{ zabbix_group }}"
+  when: ansible_facts['distribution'] == "CentOS"
+- name: Change permissions and owner
+  file:
+    dest: "{{ item }}"
+    owner: "{{ zabbix_user }}"
+    group: "{{ zabbix_group }}"
+    recurse: true 
+    # supposed to set directories to 755 and files to 644
+    mode: u=rwX,g=rX,o=rX
+  with_items:
+    - "{{ zabbix_agent_path }}"
+  when: ansible_facts['distribution'] == "CentOS"
+- name: Template a zabbix-agent cinfig file
+  ansible.builtin.template:
+    src: zabbix_agentd.j2
+    dest: "{{ zabbix_agent_path }}/zabbix_agentd.conf"
+    owner: "{{ zabbix_user }}"
+    group: "{{ zabbix_group }}"
+    mode: '0644'
+  when: ansible_facts['distribution'] == "CentOS"

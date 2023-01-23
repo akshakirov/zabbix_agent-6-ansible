@@ -1,0 +1,7 @@
+LogFile={{ zabbix_agent_path }}zabbix_agentd.log
+Server={{ zabbix_server }}
+ListenPort=10051
+ServerActive={{ zabbix_server }}
+Hostname={{ inventory_hostname }}
+HostnameItem=system.hostname
+Include={{ zabbix_agent_path }}zabbix_agentd.conf.d/*.conf

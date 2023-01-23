@@ -2,5 +2,9 @@
 # defaults file for zabbix-agent6
 
 deb_packet_ubuntu: zabbix_agent-6.0.12-linux-3.0-amd64-static.deb
+tar_packet_linux3: zabbix_agent-6.0.12-linux-3.0-amd64-static.tgz
 deb_packet_tmp_path: /root/
-
+zabbix_server: zabbix.eth.su
+zabbix_agent_path: /opt/zabbix-agent6/
+zabbix_user: zabbix
+zabbix_group: zabbix
