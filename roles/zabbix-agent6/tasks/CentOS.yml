@@ -34,3 +34,6 @@
     owner: "{{ zabbix_user }}"
     group: "{{ zabbix_group }}"
     mode: '0644'
+    notify:
+      - zabbix-agent6 enable
+      - zabbix-agent6 restart
