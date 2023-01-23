@@ -1,93 +1,10 @@
 ---
 # tasks file for zabbix-agent6
-- name: Update and upgrade apt packages
-  apt:
-    update_cache: yes
-  tags:
-    - always
-  when: ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Debian"
+- import_tasks: Debian.yml
+  when: ansible_facts['distribution'] == "Debian"
 
-- name: Copy .deb package to target
-  tags: 
-    - copy
-  ansible.builtin.copy:
-    src: "{{ deb_packet_ubuntu }}"
-    dest: "{{ deb_packet_tmp_path }}"
-    owner: root
-    group: root
-    mode: '0644'
-  when: ansible_facts['distribution'] == "Ubuntu"
-  ignore_errors: no
-
-- name: Install a .deb package
-  tags: 
-    - install
-  ansible.builtin.apt:
-    deb: "{{ deb_packet_tmp_path }}{{ deb_packet_ubuntu }}"
+- import_tasks: Ubuntu.yml
   when: ansible_facts['distribution'] == "Ubuntu"
 
-- name: Remove .deb file on target
-  tags: 
-    - clean
-  ansible.builtin.file:
-    path: "{{ deb_packet_tmp_path }}{{ deb_packet_ubuntu }}"
-    state: absent
-
-- name: Enable service zabbix-agent6 and ensure it is not masked
-  tags: 
-    - install
-  ansible.builtin.systemd:
-    name: zabbix-agent6
-    enabled: yes
-    masked: no
-  when: ansible_facts['distribution'] == "Ubuntu"
-
-- name: Make sure a service unit is running
-  tags: 
-    - install
-  ansible.builtin.systemd:
-    state: started
-    name: zabbix-agent6
-  when: ansible_facts['distribution'] == "Ubuntu"
-
-# CentOS
-- name: create directory for unarchiving
-  file:
-    path: "{{ zabbix_agent_path }}"
-    state: directory
-  when: ansible_facts['distribution'] == "CentOS"
-- name: Extract bianries to CentOS servers
-  ansible.builtin.unarchive:
-    src: "{{ tar_packet_linux3 }}"
-    dest: "{{ zabbix_agent_path }}"
-  when: ansible_facts['distribution'] == "CentOS"
-- name: Ensure group "zabbix" exists
-  ansible.builtin.group:
-    name: "{{ zabbix_group }}"
-    state: present
-  when: ansible_facts['distribution'] == "CentOS"
-- name: Add "zabbix" user
-  ansible.builtin.user:
-    name: "{{ zabbix_user }}"
-    comment: Zabbix
-    group: "{{ zabbix_group }}"
-  when: ansible_facts['distribution'] == "CentOS"
-- name: Change permissions and owner
-  file:
-    dest: "{{ item }}"
-    owner: "{{ zabbix_user }}"
-    group: "{{ zabbix_group }}"
-    recurse: true 
-    # supposed to set directories to 755 and files to 644
-    mode: u=rwX,g=rX,o=rX
-  with_items:
-    - "{{ zabbix_agent_path }}"
-  when: ansible_facts['distribution'] == "CentOS"
-- name: Template a zabbix-agent cinfig file
-  ansible.builtin.template:
-    src: zabbix_agentd.j2
-    dest: "{{ zabbix_agent_path }}/zabbix_agentd.conf"
-    owner: "{{ zabbix_user }}"
-    group: "{{ zabbix_group }}"
-    mode: '0644'
+- import_tasks: CentOS.yml
   when: ansible_facts['distribution'] == "CentOS"
