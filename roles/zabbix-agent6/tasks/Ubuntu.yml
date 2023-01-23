@@ -19,23 +19,13 @@
     - install
   ansible.builtin.apt:
     deb: "{{ deb_packet_tmp_path }}{{ deb_packet_ubuntu }}"
+    notify:
+      - zabbix-agent6 enable
+      - zabbix-agent6 restart
 - name: Remove .deb file on target
   tags: 
     - clean
   ansible.builtin.file:
     path: "{{ deb_packet_tmp_path }}{{ deb_packet_ubuntu }}"
     state: absent
-- name: Enable service zabbix-agent6 and ensure it is not masked
-  tags: 
-    - install
-  ansible.builtin.systemd:
-    name: zabbix-agent6
-    enabled: yes
-    masked: no
-- name: Make sure a service unit is running
-  tags: 
-    - install
-  ansible.builtin.systemd:
-    state: started
-    name: zabbix-agent6
 

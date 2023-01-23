@@ -1,2 +1,17 @@
 ---
 # handlers file for zabbix-agent6
+- name: zabbix-agent6 enable
+  tags: 
+    - zabbix-enable
+  ansible.builtin.systemd:
+    name: zabbix-agent6
+    enabled: yes
+    masked: no
+- name: zabbix-agent6 restart 
+  tags: 
+    - zabbix-restart
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    name: zabbix-agent6
+
